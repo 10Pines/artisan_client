@@ -1,6 +1,12 @@
+require 'net/http'
+
 module ArtisanClient
 
   class ArtisanApi
+
+    def self.default
+      self.new Net::HTTP
+    end
 
     def initialize an_http_client
       @http_client = an_http_client

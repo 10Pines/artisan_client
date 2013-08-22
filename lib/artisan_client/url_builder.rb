@@ -8,7 +8,7 @@ module ArtisanClient
     end
 
     def iterations
-      "#{@base_url}/api/projects/iterations.json?key=#{@project_key}"
+      URI "#{@base_url}/api/projects/iterations.json?key=#{@project_key}"
     end
 
   end
