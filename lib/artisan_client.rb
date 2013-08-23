@@ -7,3 +7,4 @@ require 'artisan_client/url_builder'
 
 require "artisan_client/model/iteration"
 require "artisan_client/builders/iterations_builder"
+require "artisan_client/builders/total_billed_points_by_craftsman_builder"

@@ -15,12 +15,29 @@ module ArtisanClient
     end
 
     def iterations
-      iterations_url = @base_url.iterations
+      request_url = @base_url.iterations
 
-      response = @artisan_client.fetch_results_from iterations_url
+      response = @artisan_client.fetch_results_from request_url
 
       builder = Builders::IterationsBuilder.new response.results
       builder.iterations
+    end
+
+    def total_billed_points_by_craftsman an_iteration_number
+      request_url = @base_url.total_billed_points_by_craftsman an_iteration_number
+
+      response = @artisan_client.fetch_results_from request_url
+
+      builder = Builders::TotalBilledPointsByCraftsmanBuilder.new response.results
+      builder.total_billed_points_by_craftsman
+    end
+
+    def users
+      request_url = @base_url.users
+
+      response = @artisan_client.fetch_results_from request_url
+
+      response.results.collect{ |user_data| user_data['full_name'] }
     end
 
   end

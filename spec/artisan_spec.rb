@@ -1,5 +1,23 @@
 require 'spec_helper'
 
+def simulate_iterations_response
+  iterations_url = url_builder.iterations
+  response = test_object_factory.iterations_json
+  http_client.simulate_url_response(iterations_url, response)
+end
+
+def simulate_total_billed_points_by_craftsman_response an_iteration_number
+  url = url_builder.total_billed_points_by_craftsman an_iteration_number
+  response = test_object_factory.total_billed_points_by_craftsman_json
+  http_client.simulate_url_response(url, response)
+end
+
+def simulate_users_response
+  url = url_builder.users
+  response = test_object_factory.users_json
+  http_client.simulate_url_response(url, response)
+end
+
 describe ArtisanClient::Artisan do
 
   let(:test_object_factory) { TestObjectFactory.new }
@@ -10,10 +28,8 @@ describe ArtisanClient::Artisan do
 
   describe :iterations do
 
-    it 'foo' do
-      iterations_url = url_builder.iterations
-      response = test_object_factory.iterations_json
-      http_client.simulate_url_response(iterations_url, response)
+    it 'returns the project iterations' do
+      simulate_iterations_response
 
       iterations = artisan_api.iterations
 
@@ -33,6 +49,35 @@ describe ArtisanClient::Artisan do
       actual_iteration.start_date.should == expected_iteration.start_date
       actual_iteration.updated_at.should == expected_iteration.updated_at
       actual_iteration.total_billed_points.should == expected_iteration.total_billed_points
+    end
+
+  end
+
+  describe :total_billed_points_by_craftsman do
+
+    it 'returns total billed points in an iteration by craftsman' do
+      iteration_number = 15
+      simulate_total_billed_points_by_craftsman_response iteration_number
+
+      result = artisan_api.total_billed_points_by_craftsman iteration_number
+
+      result.should have(2).items
+      result['John'].should == 9.3
+      result['Mike'].should == 15.8
+    end
+
+  end
+
+  describe :users do
+
+    it 'returns the names of the users that belongs to the project' do
+      simulate_users_response
+
+      result = artisan_api.users
+
+      result.should have(2).items
+      result.should include('John')
+      result.should include('Mike')
     end
 
   end
