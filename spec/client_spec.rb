@@ -1,32 +1,21 @@
 require 'spec_helper'
 
-def simulate_iterations_response
-  iterations_url = url_builder.iterations
-  response = test_object_factory.iterations_json
-  http_client.simulate_url_response(iterations_url, response)
-end
-
-def simulate_total_billed_points_by_craftsman_response an_iteration_number
-  url = url_builder.total_billed_points_by_craftsman an_iteration_number
-  response = test_object_factory.total_billed_points_by_craftsman_json
-  http_client.simulate_url_response(url, response)
-end
-
-def simulate_users_response
-  url = url_builder.users
-  response = test_object_factory.users_json
-  http_client.simulate_url_response(url, response)
-end
-
-describe ArtisanClient::Artisan do
+describe ArtisanClient::Client do
 
   let(:test_object_factory) { TestObjectFactory.new }
-  let(:http_client) { test_object_factory.http_client }
-  let(:json_client) { test_object_factory.json_client_using http_client }
-  let(:url_builder) { test_object_factory.url_builder }
-  let(:artisan_api) { ArtisanClient::Artisan.new json_client, url_builder }
+  let(:http_client) { HttpClientForTesting.new }
+  let(:json_client) { JsonClient::Client.new http_client }
+  let(:url_builder) { ArtisanClient::UrlBuilder.new 'http://foo.com', '1234' }
+  let(:artisan_api) { ArtisanClient::Client.new json_client, url_builder }
 
   describe :iterations do
+
+    def simulate_iterations_response
+      url = url_builder.iterations
+      response = test_object_factory.iterations_json
+
+      http_client.simulate_reponse_for(url, response)
+    end
 
     it 'returns the project iterations' do
       simulate_iterations_response
@@ -36,7 +25,7 @@ describe ArtisanClient::Artisan do
       iterations.should have(1).item
 
       actual_iteration = iterations.first
-      expected_iteration = test_object_factory.iteration
+      expected_iteration = test_object_factory.iterations.first
 
       actual_iteration.committed_points.should == expected_iteration.committed_points
       actual_iteration.committed_points_at_completion.should == expected_iteration.committed_points_at_completion
@@ -55,6 +44,13 @@ describe ArtisanClient::Artisan do
 
   describe :total_billed_points_by_craftsman do
 
+    def simulate_total_billed_points_by_craftsman_response an_iteration_number
+      url = url_builder.total_billed_points_by_craftsman an_iteration_number
+      response = test_object_factory.total_billed_points_by_craftsman_json
+
+      http_client.simulate_reponse_for(url, response)
+    end
+
     it 'returns total billed points in an iteration by craftsman' do
       iteration_number = 15
       simulate_total_billed_points_by_craftsman_response iteration_number
@@ -69,6 +65,13 @@ describe ArtisanClient::Artisan do
   end
 
   describe :users do
+
+    def simulate_users_response
+      url = url_builder.users
+      response = test_object_factory.users_json
+
+      http_client.simulate_reponse_for url, response
+    end
 
     it 'returns the names of the users that belongs to the project' do
       simulate_users_response

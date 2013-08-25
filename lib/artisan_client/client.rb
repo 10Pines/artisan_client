@@ -1,9 +1,13 @@
+require 'artisan_client/url_builder'
+require 'artisan_client/builders/iterations_builder'
+require 'artisan_client/builders/total_billed_points_by_craftsman_builder'
+
 module ArtisanClient
 
-  class Artisan
+  class Client
 
     def self.default artisan_url, project_key
-      artisan_api = ArtisanApi.default
+      artisan_api = JsonClient.default
       url_builder = UrlBuilder.new artisan_url, project_key
 
       self.new artisan_api, url_builder

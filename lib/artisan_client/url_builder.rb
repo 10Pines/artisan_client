@@ -8,15 +8,19 @@ module ArtisanClient
     end
 
     def iterations
-      URI "#{@base_url}/api/projects/iterations.json?key=#{@project_key}"
+      build_api_uri_for 'projects/iterations'
     end
 
     def total_billed_points_by_craftsman an_iteration_number
-      URI "#{@base_url}/api/projects/iterations/#{an_iteration_number}/total_billed_points_by_craftsman.json?key=#{@project_key}"
-      end
+      build_api_uri_for "projects/iterations/#{an_iteration_number}/total_billed_points_by_craftsman"
+    end
 
     def users
-      URI "#{@base_url}/api/projects/users.json?key=#{@project_key}"
+      build_api_uri_for 'projects/users'
+    end
+
+    def build_api_uri_for(a_path)
+      URI "#{@base_url}/api/#{a_path}.json?key=#{@project_key}"
     end
 
   end
