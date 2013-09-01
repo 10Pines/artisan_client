@@ -34,6 +34,10 @@ module ArtisanClient
         self.start_date <= a_date && a_date <= self.finish_date
       end
 
+      def copy_with_new_total_billed_points points
+        self.class.new committed_points, committed_points_at_completion, complete, completed_at, created_at, finish_date, id, number, start_date, updated_at, points
+      end
+
     end
 
   end

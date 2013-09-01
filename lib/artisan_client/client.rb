@@ -36,6 +36,19 @@ module ArtisanClient
       builder.total_billed_points_by_craftsman
     end
 
+    def total_billed_points_filtered_by_craftsman an_iteration_number, craftsman_names
+      points_by_craftsman = self.total_billed_points_by_craftsman an_iteration_number
+      points_by_craftsman.keep_if { |name, points| craftsman_names.include? name }
+    end
+
+    def iterations_filtered_by_craftsman craftsman_names
+      self.iterations.collect { |each|
+        points_by_craftsman = self.total_billed_points_filtered_by_craftsman each.number, craftsman_names
+        total_billed_points = points_by_craftsman.values.inject(0){ |sum, points| sum + points }
+        each.copy_with_new_total_billed_points total_billed_points
+      }
+    end
+
     def users
       request_url = @base_url.users
 

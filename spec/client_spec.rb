@@ -9,14 +9,21 @@ describe ArtisanClient::Client do
   let(:url_builder) { ArtisanClient::UrlBuilder.new 'http://foo.com', '1234' }
   let(:artisan_api) { ArtisanClient::Client.new json_client, url_builder }
 
+  def simulate_iterations_response
+    url = url_builder.iterations
+    response = test_object_factory.iterations_json
+
+    http_client.simulate_successful_response_for(url, response)
+  end
+
+  def simulate_total_billed_points_by_craftsman_response an_iteration_number
+    url = url_builder.total_billed_points_by_craftsman an_iteration_number
+    response = test_object_factory.total_billed_points_by_craftsman_json
+
+    http_client.simulate_successful_response_for(url, response)
+  end
+
   describe :iterations do
-
-    def simulate_iterations_response
-      url = url_builder.iterations
-      response = test_object_factory.iterations_json
-
-      http_client.simulate_successful_response_for(url, response)
-    end
 
     before(:each) do
       simulate_iterations_response
@@ -65,13 +72,6 @@ describe ArtisanClient::Client do
 
   describe :total_billed_points_by_craftsman do
 
-    def simulate_total_billed_points_by_craftsman_response an_iteration_number
-      url = url_builder.total_billed_points_by_craftsman an_iteration_number
-      response = test_object_factory.total_billed_points_by_craftsman_json
-
-      http_client.simulate_successful_response_for(url, response)
-    end
-
     it 'returns total billed points in an iteration by craftsman' do
       iteration_number = 15
       simulate_total_billed_points_by_craftsman_response iteration_number
@@ -82,6 +82,38 @@ describe ArtisanClient::Client do
       result['John'].should == 9.3
       result['Mike'].should == 15.8
     end
+
+  end
+
+  describe :iterations_filtered_by_craftsman do
+
+    before(:each) do
+      simulate_iterations_response
+
+      iteration = test_object_factory.iterations.first
+      simulate_total_billed_points_by_craftsman_response iteration.number
+    end
+
+    it 'returns the project iterations with total_billed_points calculated for the selected craftsman only' do
+      expected_iteration = test_object_factory.iterations.first
+
+      iterations = artisan_api.iterations_filtered_by_craftsman(['Mike'])
+
+      iterations.should have(1).item
+      actual_iteration = iterations.first
+      actual_iteration.committed_points.should == expected_iteration.committed_points
+      actual_iteration.committed_points_at_completion.should == expected_iteration.committed_points_at_completion
+      actual_iteration.complete.should == expected_iteration.complete
+      actual_iteration.completed_at.should == expected_iteration.completed_at
+      actual_iteration.created_at.should == expected_iteration.created_at
+      actual_iteration.finish_date.should == expected_iteration.finish_date
+      actual_iteration.id.should == expected_iteration.id
+      actual_iteration.number.should == expected_iteration.number
+      actual_iteration.start_date.should == expected_iteration.start_date
+      actual_iteration.updated_at.should == expected_iteration.updated_at
+      actual_iteration.total_billed_points.should == 15.8
+    end
+
 
   end
 
