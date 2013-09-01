@@ -1,4 +1,4 @@
-require 'json'
+require 'artisan_client/model/iteration'
 
 module ArtisanClient
 

@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: https://github.com/10Pines/json_client.git
-  revision: 3165a57cc853d66b50254a112153bfb083404ec4
+  revision: e8e44cfabce4dfb0c5030297b86d6cf53da39008
   specs:
     json_client (0.0.1)
 
