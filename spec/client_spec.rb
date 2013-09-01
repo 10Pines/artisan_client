@@ -18,9 +18,11 @@ describe ArtisanClient::Client do
       http_client.simulate_successful_response_for(url, response)
     end
 
-    it 'returns the project iterations' do
+    before(:each) do
       simulate_iterations_response
+    end
 
+    it 'returns the project iterations' do
       iterations = artisan_api.iterations
 
       iterations.should have(1).item
@@ -39,6 +41,24 @@ describe ArtisanClient::Client do
       actual_iteration.start_date.should == expected_iteration.start_date
       actual_iteration.updated_at.should == expected_iteration.updated_at
       actual_iteration.total_billed_points.should == expected_iteration.total_billed_points
+    end
+
+    describe :include? do
+
+      it 'returns true for dates in the iteration' do
+        iteration = artisan_api.iterations.first
+
+        iteration.should include(iteration.start_date)
+        iteration.should include(iteration.finish_date)
+      end
+
+      it 'returns dates for dates outside the iteration' do
+        iteration = artisan_api.iterations.first
+
+        iteration.should_not include(iteration.start_date - 1)
+        iteration.should_not include(iteration.finish_date + 1)
+      end
+
     end
 
   end

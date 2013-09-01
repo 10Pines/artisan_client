@@ -30,6 +30,10 @@ module ArtisanClient
         @total_billed_points = total_billed_points
       end
 
+      def include? a_date
+        self.start_date <= a_date && a_date <= self.finish_date
+      end
+
     end
 
   end
