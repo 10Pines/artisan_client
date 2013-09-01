@@ -7,7 +7,7 @@ module ArtisanClient
   class Client
 
     def self.default artisan_url, project_key
-      artisan_api = JsonClient.default
+      artisan_api = JsonClient::Client.default
       url_builder = UrlBuilder.new artisan_url, project_key
 
       self.new artisan_api, url_builder
