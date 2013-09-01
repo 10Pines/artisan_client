@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'testing_http_client'
 
 describe ArtisanClient::Client do
 
   let(:test_object_factory) { TestObjectFactory.new }
-  let(:http_client) { HttpClientForTesting.new }
+  let(:http_client) { Testing::HttpClient.new }
   let(:json_client) { JsonClient::Client.new http_client }
   let(:url_builder) { ArtisanClient::UrlBuilder.new 'http://foo.com', '1234' }
   let(:artisan_api) { ArtisanClient::Client.new json_client, url_builder }
@@ -14,7 +15,7 @@ describe ArtisanClient::Client do
       url = url_builder.iterations
       response = test_object_factory.iterations_json
 
-      http_client.simulate_reponse_for(url, response)
+      http_client.simulate_successful_response_for(url, response)
     end
 
     it 'returns the project iterations' do
@@ -48,7 +49,7 @@ describe ArtisanClient::Client do
       url = url_builder.total_billed_points_by_craftsman an_iteration_number
       response = test_object_factory.total_billed_points_by_craftsman_json
 
-      http_client.simulate_reponse_for(url, response)
+      http_client.simulate_successful_response_for(url, response)
     end
 
     it 'returns total billed points in an iteration by craftsman' do
@@ -70,7 +71,7 @@ describe ArtisanClient::Client do
       url = url_builder.users
       response = test_object_factory.users_json
 
-      http_client.simulate_reponse_for url, response
+      http_client.simulate_successful_response_for url, response
     end
 
     it 'returns the names of the users that belongs to the project' do

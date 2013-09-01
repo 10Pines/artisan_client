@@ -1,5 +1,4 @@
 require 'rspec/mocks'
-require 'http_client_for_testing'
 require 'artisan_client/model/iteration'
 
 class TestObjectFactory
