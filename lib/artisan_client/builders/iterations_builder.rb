@@ -15,18 +15,17 @@ module ArtisanClient
       end
 
       def iteration_from_hash(an_iteration_data)
-        Model::Iteration.new an_iteration_data['committed_points'],
-                             an_iteration_data['committed_points_at_completion'].to_f,
-                             an_iteration_data['complete'],
-                             #TODO: to be refactored
-                             (an_iteration_data['completed_at'].nil? ? nil : DateTime.parse(an_iteration_data['completed_at'])),
-                             DateTime.parse(an_iteration_data['created_at']),
-                             DateTime.parse(an_iteration_data['finish_date']),
-                             an_iteration_data['id'],
+        Model::Iteration.new an_iteration_data['id'],
                              an_iteration_data['number'],
-                             DateTime.parse(an_iteration_data['start_date']),
-                             DateTime.parse(an_iteration_data['updated_at']),
+                             self.build_iteration_duration_from(an_iteration_data),
                              an_iteration_data['total_billed_points']
+      end
+
+      def build_iteration_duration_from an_iteration_data
+        start_date = DateTime.parse an_iteration_data['start_date']
+        finish_date = DateTime.parse an_iteration_data['finish_date']
+
+        start_date..finish_date
       end
 
     end

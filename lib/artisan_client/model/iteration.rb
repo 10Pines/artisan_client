@@ -4,38 +4,31 @@ module ArtisanClient
 
     class Iteration
 
-      attr_reader :committed_points,
-                  :committed_points_at_completion,
-                  :complete,
-                  :completed_at,
-                  :created_at,
-                  :finish_date,
-                  :id,
+      attr_reader :id,
                   :number,
-                  :start_date,
-                  :updated_at,
                   :total_billed_points
 
-      def initialize committed_points, committed_points_at_completion, complete, completed_at, created_at, finish_date, id, number, start_date, updated_at, total_billed_points
-        @committed_points = committed_points
-        @committed_points_at_completion = committed_points_at_completion
-        @complete = complete
-        @completed_at = completed_at
-        @created_at = created_at
-        @finish_date = finish_date
+      def initialize id, number, duration, total_billed_points
         @id = id
         @number = number
-        @start_date = start_date
-        @updated_at = updated_at
+        @duration = duration
         @total_billed_points = total_billed_points
       end
 
+      def start_date
+        @duration.begin
+        end
+
+      def finish_date
+        @duration.end
+      end
+
       def include? a_date
-        self.start_date <= a_date && a_date <= self.finish_date
+        @duration.include? a_date
       end
 
       def copy_with_new_total_billed_points points
-        self.class.new committed_points, committed_points_at_completion, complete, completed_at, created_at, finish_date, id, number, start_date, updated_at, points
+        self.class.new id, number, @duration, points
       end
 
     end
